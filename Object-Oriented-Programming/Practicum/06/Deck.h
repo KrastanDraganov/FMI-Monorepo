@@ -28,4 +28,6 @@ public:
 
     bool removeMonsterCard(int index);
     bool removeSpellCard(int index);
+
+    void sortMonsterCards(bool (*predicate)(const MonsterCard &, const MonsterCard &));
 };

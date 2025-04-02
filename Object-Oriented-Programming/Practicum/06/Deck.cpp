@@ -95,3 +95,23 @@ bool Deck::removeSpellCard(int index)
 
     return true;
 }
+
+void Deck::sortMonsterCards(bool (*predicate)(const MonsterCard &, const MonsterCard &))
+{
+    for (int i = 0; i < monstersCount - 1; ++i)
+    {
+        int minIndex = i;
+        for (unsigned j = i + 1; j < monstersCount; ++j)
+        {
+            if (predicate(monsters[j], monsters[minIndex]))
+            {
+                minIndex = j;
+            }
+        }
+
+        if (minIndex != i)
+        {
+            std::swap(monsters[i], monsters[minIndex]);
+        }
+    }
+}
