@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+
+    <title>Космическа совалка - 0MI0800653</title>
+
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+      }
+
+      canvas {
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js"
+        }
+      }
+    </script>
+  </head>
+
+  <body>
+    <script type="module">
+      import * as THREE from "three";
+
+      const renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(innerWidth, innerHeight);
+      document.body.appendChild(renderer.domElement);
+
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color("#101020");
+
+      const camera = new THREE.PerspectiveCamera(30, innerWidth / innerHeight);
+      camera.position.set(0, 3, 10);
+      camera.lookAt(0, 0, 0);
+
+      const light = new THREE.PointLight("#ffffff", 15);
+      light.position.set(5, 5, 5);
+      scene.add(light);
+
+      const fillLight = new THREE.PointLight("#ffcc88", 4);
+      fillLight.position.set(-5, -3, 5);
+      scene.add(fillLight);
+
+      const shuttle = new THREE.Group();
+      scene.add(shuttle);
+
+      const tank = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.5, 0.55, 5, 32),
+        new THREE.MeshPhongMaterial({ color: "#d16a0b", shininess: 40 })
+      );
+
+      tank.position.set(-1.5, 0, 0);
+      tank.rotation.z = Math.PI / 2;
+
+      shuttle.add(tank);
+
+      const body = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.5, 0.6, 5, 32),
+        new THREE.MeshPhongMaterial({ color: "#ffffff", shininess: 100 })
+      );
+
+      body.rotation.z = Math.PI / 2;
+      shuttle.add(body);
+
+      const nose = new THREE.Mesh(
+        new THREE.ConeGeometry(0.5, 1, 32),
+        new THREE.MeshPhongMaterial({ color: "#111111", shininess: 30 })
+      );
+
+      nose.position.x = 3;
+      nose.rotation.z = Math.PI / 2;
+      shuttle.add(nose);
+
+      const wingTop = new THREE.MeshPhongMaterial({
+        color: "#ffffff",
+        shininess: 80,
+      });
+
+      const wingBottom = new THREE.MeshPhongMaterial({
+        color: "#222222",
+        shininess: 40,
+      });
+
+      const wingL = new THREE.Mesh(new THREE.BoxGeometry(2, 0.1, 0.5), wingTop);
+
+      wingL.position.set(0, -0.3, 0.6);
+
+      const wingR = new THREE.Mesh(
+        new THREE.BoxGeometry(2, 0.1, 0.5),
+        wingBottom
+      );
+
+      wingR.position.set(0, -0.3, -0.6);
+      shuttle.add(wingL, wingR);
+
+      const boosterMaterial = new THREE.MeshPhongMaterial({
+        color: "#f8f8f8",
+        shininess: 80,
+      });
+
+      const ringMaterial = new THREE.MeshPhongMaterial({
+        color: "#777777",
+        shininess: 20,
+      });
+
+      for (let i of [-0.5, 0.5]) {
+        const booster = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.2, 0.25, 3, 16),
+          boosterMaterial
+        );
+
+        booster.position.set(-2, i, 0);
+        booster.rotation.z = Math.PI / 2;
+        shuttle.add(booster);
+
+        const ringTop = new THREE.Mesh(
+          new THREE.TorusGeometry(0.22, 0.02, 8, 24),
+          ringMaterial
+        );
+
+        ringTop.rotation.y = Math.PI / 2;
+        ringTop.position.set(-0.5, i, 0);
+        shuttle.add(ringTop);
+
+        const ringBottom = ringTop.clone();
+        ringBottom.position.set(-3.3, i, 0);
+        shuttle.add(ringBottom);
+      }
+
+      renderer.setAnimationLoop((t) => {
+        shuttle.rotation.y = t / 2000;
+        renderer.render(scene, camera);
+      });
+    </script>
+  </body>
+</html>
