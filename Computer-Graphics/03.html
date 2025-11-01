@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+
+<html lang="bg">
+  <head>
+    <meta charset="utf-8" />
+
+    <title>Музей на будителите - 0MI0800653</title>
+
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+      }
+
+      canvas {
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js"
+        }
+      }
+    </script>
+  </head>
+
+  <body>
+    <script type="module">
+      import * as THREE from "three";
+
+      const renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(innerWidth, innerHeight);
+      renderer.shadowMap.enabled = true;
+      document.body.appendChild(renderer.domElement);
+
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color("#a9cfff");
+
+      const camera = new THREE.PerspectiveCamera(
+        32,
+        innerWidth / innerHeight,
+        0.1,
+        200
+      );
+
+      camera.position.set(16, 9, 26);
+      camera.lookAt(0, 4, 0);
+
+      scene.add(new THREE.AmbientLight(0xffffff, 0.35));
+
+      const sun = new THREE.DirectionalLight(0xffffff, 1.0);
+
+      sun.position.set(8, 16, 12);
+      sun.castShadow = true;
+      sun.shadow.mapSize.set(1024, 1024);
+
+      scene.add(sun);
+
+      const warmFill = new THREE.PointLight(0xffddaa, 0.6, 50);
+      warmFill.position.set(-12, 4, 8);
+      scene.add(warmFill);
+
+      const yard = new THREE.Mesh(
+        new THREE.PlaneGeometry(60, 36),
+        new THREE.MeshPhongMaterial({ color: 0xdedfe6, shininess: 10 })
+      );
+
+      yard.rotation.x = -Math.PI / 2;
+      yard.receiveShadow = true;
+
+      scene.add(yard);
+
+      const path = new THREE.Mesh(
+        new THREE.BoxGeometry(60, 0.1, 2),
+        new THREE.MeshPhongMaterial({ color: 0xb3a79a })
+      );
+
+      path.position.set(0, 0.05, 6);
+      path.receiveShadow = true;
+
+      scene.add(path);
+
+      const museum = new THREE.Group();
+      scene.add(museum);
+
+      const base = new THREE.Mesh(
+        new THREE.BoxGeometry(16, 1.2, 10),
+        new THREE.MeshPhongMaterial({ color: 0xcfc8bf, shininess: 20 })
+      );
+
+      base.position.set(0, 0.6, 0);
+      base.castShadow = true;
+      base.receiveShadow = true;
+
+      museum.add(base);
+
+      const facade = new THREE.Mesh(
+        new THREE.BoxGeometry(14, 6, 8),
+        new THREE.MeshPhongMaterial({ color: 0xf5efe6, shininess: 40 })
+      );
+
+      facade.position.set(0, 4, 0);
+      facade.castShadow = true;
+      facade.receiveShadow = true;
+
+      museum.add(facade);
+
+      function cornice(width, y) {
+        const m = new THREE.Mesh(
+          new THREE.BoxGeometry(width, 0.3, 8.2),
+          new THREE.MeshPhongMaterial({ color: 0xe6d7b0, shininess: 80 })
+        );
+
+        m.position.set(0, y, 0);
+        m.castShadow = true;
+        m.receiveShadow = true;
+
+        museum.add(m);
+      }
+
+      cornice(14.2, 7.0);
+      cornice(14.6, 1.2);
+
+      const roof = new THREE.Mesh(
+        new THREE.BoxGeometry(14.6, 1.0, 8.6),
+        new THREE.MeshPhongMaterial({ color: 0x7c2f2f, shininess: 30 })
+      );
+
+      roof.position.set(0, 8.0, 0);
+      roof.castShadow = true;
+      roof.receiveShadow = true;
+
+      museum.add(roof);
+
+      const pediment = new THREE.Mesh(
+        new THREE.ConeGeometry(4.8, 2.4, 3),
+        new THREE.MeshPhongMaterial({ color: 0xe6d7b0, shininess: 80 })
+      );
+
+      pediment.rotation.y = Math.PI / 2 - 0.55;
+      pediment.position.set(0, 9.7, 1.5);
+
+      museum.add(pediment);
+
+      function addColumn(x, z = 4.3) {
+        const shaft = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.35, 0.35, 5.2, 24),
+          new THREE.MeshPhongMaterial({ color: 0xffffff, shininess: 100 })
+        );
+
+        shaft.position.set(x, 3.1, z);
+        museum.add(shaft);
+
+        const cap = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.45, 0.45, 0.3, 24),
+          new THREE.MeshPhongMaterial({ color: 0xe6d7b0, shininess: 80 })
+        );
+
+        cap.position.set(x, 5.9, z);
+        museum.add(cap);
+
+        const baseC = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.45, 0.45, 0.3, 24),
+          new THREE.MeshPhongMaterial({ color: 0xe6d7b0, shininess: 80 })
+        );
+
+        baseC.position.set(x, 0.6, z);
+        museum.add(baseC);
+      }
+
+      [-5.5, -2.7, 0, 2.7, 5.5].forEach((x) => addColumn(x));
+
+      function makeTower(side) {
+        const g = new THREE.Group();
+
+        const cyl = new THREE.Mesh(
+          new THREE.CylinderGeometry(1.6, 1.6, 7, 24),
+          new THREE.MeshPhongMaterial({ color: 0xb24e4e, shininess: 30 })
+        );
+
+        g.add(cyl);
+
+        const belt = new THREE.Mesh(
+          new THREE.CylinderGeometry(1.8, 1.8, 0.4, 24),
+          new THREE.MeshPhongMaterial({ color: 0xe6d7b0, shininess: 80 })
+        );
+
+        belt.position.y = 3.8;
+        g.add(belt);
+
+        const dome = new THREE.Mesh(
+          new THREE.SphereGeometry(1.6, 24, 16, 0, Math.PI * 2, 0, Math.PI / 2),
+          new THREE.MeshPhongMaterial({ color: 0x346b6f, shininess: 80 })
+        );
+
+        dome.position.y = 4.1;
+        g.add(dome);
+
+        g.position.set(side * 8, 4.5, 0);
+        museum.add(g);
+      }
+
+      makeTower(+1);
+      makeTower(-1);
+
+      const glassColors = [0xff7676, 0x6ee7ff, 0x7dff8a, 0xffe46e, 0xd9a6ff];
+
+      function makeWindow(x, y, z) {
+        const col = glassColors[(Math.random() * glassColors.length) | 0];
+
+        const pane = new THREE.Mesh(
+          new THREE.BoxGeometry(0.9, 1.4, 0.08),
+          new THREE.MeshPhongMaterial({
+            color: 0xffffff,
+            emissive: col,
+            emissiveIntensity: 0.5,
+          })
+        );
+        pane.position.set(x, y, z);
+        museum.add(pane);
+
+        const glow = new THREE.PointLight(col, 0.8, 8);
+        glow.position.set(x, y, z - 0.2);
+        museum.add(glow);
+      }
+
+      for (let row = 0; row < 2; row++) {
+        for (let i = -2; i <= 2; i++) {
+          makeWindow(i * 2.6, 3 + row * 2.2, 4.05);
+        }
+      }
+
+      const flagGroup = new THREE.Group();
+      scene.add(flagGroup);
+
+      const pole = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.08, 0.08, 4, 16),
+        new THREE.MeshPhongMaterial({ color: 0x8b5a2b })
+      );
+      pole.position.set(-0.1, 2, 6);
+      flagGroup.add(pole);
+
+      const clothW = 3;
+      const clothH = 1.6;
+
+      const clothGeom = new THREE.PlaneGeometry(clothW, clothH, 24, 6);
+
+      const clothMat = new THREE.MeshPhongMaterial({
+        color: 0x0a7f66,
+        emissive: 0xffd54d,
+        emissiveIntensity: 0.18,
+        side: THREE.DoubleSide,
+      });
+
+      const cloth = new THREE.Mesh(clothGeom, clothMat);
+      cloth.position.set(1.4, 3.0, 6);
+      flagGroup.add(cloth);
+
+      const plinth = new THREE.Mesh(
+        new THREE.CylinderGeometry(1.2, 1.4, 0.6, 24),
+        new THREE.MeshPhongMaterial({ color: 0xe0d8cd })
+      );
+
+      plinth.position.set(1.0, 0.3, 6);
+      flagGroup.add(plinth);
+
+      let t0 = performance.now();
+      renderer.setAnimationLoop((t) => {
+        const dt = (t - t0) / 1000;
+        t0 = t;
+
+        const R = 30;
+        const ang = t * 0.00002 * 60;
+
+        camera.position.x = Math.cos(ang) * R;
+        camera.position.z = Math.sin(ang) * R;
+        camera.position.y = 9;
+        camera.lookAt(0, 4, 0);
+
+        const pos = cloth.geometry.attributes.position;
+
+        for (let i = 0; i < pos.count; i++) {
+          const x = pos.getX(i);
+          const phase = (x / clothW + 0.5) * Math.PI * 2 + t * 0.003;
+          const z = Math.sin(phase) * 0.12 * (1 - (x / clothW + 0.5) * 0.2);
+
+          pos.setZ(i, z);
+        }
+
+        pos.needsUpdate = true;
+        cloth.geometry.computeVertexNormals();
+
+        renderer.render(scene, camera);
+      });
+    </script>
+  </body>
+</html>
