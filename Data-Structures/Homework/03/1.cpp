@@ -88,8 +88,7 @@ Node *transformList(Node *head)
 
 int main()
 {
-    std::cout << "=== Task 1 ===\n";
-    Node *list1 = new Node('a',
+    Node *input = new Node('a',
                            new Node('b',
                                     new Node('1',
                                              new Node('-',
@@ -98,14 +97,14 @@ int main()
                                                                         new Node('z')))))));
 
     std::cout << "Original: ";
-    print(list1);
+    print(input);
 
-    list1 = transformList(list1);
+    input = transformList(input);
 
     std::cout << "Transformed: ";
-    print(list1);
+    print(input);
 
-    freeList(list1);
+    freeList(input);
 
     return 0;
 }
