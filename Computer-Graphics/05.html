@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+
+<html lang="bg">
+  <head>
+    <meta charset="utf-8" />
+
+    <title>A05 - Наздравица - 0MI0800653</title>
+
+    <style>
+      body {
+        margin: 0;
+        height: 100%;
+        overflow: hidden;
+      }
+
+      canvas {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+    </style>
+
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js"
+        }
+      }
+    </script>
+  </head>
+
+  <body>
+    <script type="module">
+      import * as THREE from "three";
+
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(0xcfe8ff);
+
+      const camera = new THREE.PerspectiveCamera(
+        45,
+        innerWidth / innerHeight,
+        0.1,
+        100
+      );
+
+      camera.position.set(0, 4.5, 10);
+      camera.lookAt(0, 2.5, 0);
+
+      const renderer = new THREE.WebGLRenderer({ antialias: true });
+
+      renderer.setSize(innerWidth, innerHeight);
+      renderer.shadowMap.enabled = true;
+
+      document.body.appendChild(renderer.domElement);
+
+      scene.add(new THREE.AmbientLight(0xffffff, 0.55));
+
+      const light = new THREE.DirectionalLight(0xffffff, 1.2);
+      light.position.set(6, 10, 6);
+      scene.add(light);
+
+      const surface = new THREE.Mesh(
+        new THREE.PlaneGeometry(40, 40),
+        new THREE.MeshStandardMaterial({ color: 0xfff1cc, roughness: 0.9 })
+      );
+
+      surface.rotation.x = -Math.PI / 2;
+      scene.add(surface);
+
+      function createGlass() {
+        const g = new THREE.Group();
+
+        const glassMaterial = new THREE.MeshPhysicalMaterial({
+          color: 0x9fb7cc,
+          roughness: 0.15,
+          transmission: 0.8,
+          transparent: true,
+          opacity: 0.6,
+          thickness: 0.7,
+          ior: 1.45,
+        });
+
+        const glass = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.9, 0.75, 2.4, 48, 1, true),
+          glassMaterial
+        );
+
+        glass.position.y = 1.2;
+
+        g.add(glass);
+
+        const bottom = new THREE.Mesh(
+          new THREE.CircleGeometry(0.75, 32),
+          new THREE.MeshStandardMaterial({
+            color: 0x7fa0b8,
+            roughness: 0.25,
+            metalness: 0.1,
+          })
+        );
+
+        bottom.rotation.x = -Math.PI / 2;
+        bottom.position.y = 0.05;
+
+        g.add(bottom);
+
+        const iceMaterial = new THREE.MeshStandardMaterial({
+          color: 0xeefaff,
+          roughness: 0.35,
+        });
+
+        const iceCubes = [];
+
+        for (let i = 0; i < 6; i++) {
+          const cube = new THREE.Mesh(
+            new THREE.BoxGeometry(0.28, 0.28, 0.28),
+            iceMaterial
+          );
+
+          cube.position.set(
+            (Math.random() - 0.5) * 0.45,
+            0.25,
+            (Math.random() - 0.5) * 0.45
+          );
+
+          g.add(cube);
+          iceCubes.push(cube);
+        }
+
+        g.userData = {
+          iceCubes,
+          prevX: g.position.x,
+        };
+
+        return g;
+      }
+
+      const leftGlass = createGlass();
+      const rightGlass = createGlass();
+
+      leftGlass.position.set(-3, 1.4, 0);
+      rightGlass.position.set(3, 1.4, 0);
+
+      scene.add(leftGlass, rightGlass);
+
+      function toastMotion(t) {
+        const p = Math.sin(t) * 0.5 + 0.5;
+
+        return {
+          lx: -3.3 + p * 1.9,
+          rx: 3.3 - p * 1.9,
+          tilt: p * 0.22,
+        };
+      }
+
+      function updateIce(glass) {
+        const dx = glass.position.x - glass.userData.prevX;
+        glass.userData.prevX = glass.position.x;
+
+        for (const cube of glass.userData.iceCubes) {
+          cube.position.x += dx * 1.1;
+          cube.position.x = THREE.MathUtils.clamp(cube.position.x, -0.45, 0.45);
+        }
+      }
+
+      function animate(time) {
+        const t = time * 0.001;
+        const m = toastMotion(t);
+
+        leftGlass.position.x = m.lx;
+        rightGlass.position.x = m.rx;
+
+        leftGlass.rotation.z = -m.tilt;
+        rightGlass.rotation.z = m.tilt;
+
+        updateIce(leftGlass);
+        updateIce(rightGlass);
+
+        renderer.render(scene, camera);
+        requestAnimationFrame(animate);
+      }
+
+      requestAnimationFrame(animate);
+
+      addEventListener("resize", () => {
+        camera.aspect = innerWidth / innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(innerWidth, innerHeight);
+      });
+    </script>
+  </body>
+</html>
