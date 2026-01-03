@@ -14,61 +14,64 @@ using namespace std;
 struct Node
 {
     int value;
-    Node* next;
+    Node *next;
     // Constructor with two arguments, one of which is default
-    Node(int value, Node* next = nullptr) : value(value), next(next) {};
+    Node(int value, Node *next = nullptr) : value(value), next(next) {};
 };
 
 struct SinglyLinkedList
 {
-    Node* head, * tail;
+    Node *head, *tail;
     int size;
 
-    SinglyLinkedList() :head(nullptr), tail(nullptr), size(0) {}; // Default constructor
+    SinglyLinkedList() : head(nullptr), tail(nullptr), size(0) {}; // Default constructor
 
-    void addAtHead(int X); // Utility function for add 
-    void addAtTail(int X); // Utility function for add 
+    void addAtHead(int X); // Utility function for add
+    void addAtTail(int X); // Utility function for add
     void add(int X, int pos);
 
     void remove(int pos);
 
     void reverse(); // Iterative
 
-    Node* reverseRecursiveUtil(Node* head); // Utility function for recursive reverse function
-    void reverseRecursive(); // Recursive
+    Node *reverseRecursiveUtil(Node *head); // Utility function for recursive reverse function
+    void reverseRecursive();                // Recursive
 
     bool isPalindrom();
 
     int count(int X);
 
     void replace(int X);
-    
-    pair<Node*, Node*> createNodeXTimes(int X);
+
+    pair<Node *, Node *> createNodeXTimes(int X);
 
     void group(int start, int end);
 
     // Instead of print function
-    friend std::ostream& operator<<(std::ostream& os, const SinglyLinkedList& list);
+    friend std::ostream &operator<<(std::ostream &os, const SinglyLinkedList &list);
 };
-
 
 int main()
 {
-    size_t N, Q; std::cin >> N;
+    size_t N, Q;
+    std::cin >> N;
 
     int el(0), pos(0);
 
     for (size_t i = 0; i < N; i++)
     {
         SinglyLinkedList list;
-        std::cin >> Q; std::cin.ignore();
+        std::cin >> Q;
+        std::cin.ignore();
         for (size_t i = 0; i < Q; i++)
         {
 
-            std::string line; getline(std::cin, line);
+            std::string line;
+            getline(std::cin, line);
             std::istringstream istr(line);
 
-            std::string command; istr >> command;
+            std::string command;
+            istr >> command;
 
             if (command == "add")
             {
@@ -88,7 +91,7 @@ int main()
             {
                 istr >> el;
                 list.replace(el);
-                std::cout << list <<"\n";
+                std::cout << list << "\n";
             }
             else
             {
@@ -98,34 +101,34 @@ int main()
                     istr >> command;
                     count++;
                 }
-                i += count-1;
+                i += count - 1;
             }
         }
     }
     return 0;
 }
 
-std::ostream& operator<<(std::ostream& os, const SinglyLinkedList& list)
+std::ostream &operator<<(std::ostream &os, const SinglyLinkedList &list)
 {
-    Node* traverse = list.head;
+    Node *traverse = list.head;
     while (traverse != nullptr)
     {
         os << traverse->value << '#';
         traverse = traverse->next;
-    } //os << '\n';
+    } // os << '\n';
     return os;
 }
 
 void SinglyLinkedList::addAtHead(int X)
 {
-    Node* newNode = new Node(X);
+    Node *newNode = new Node(X);
     if (head == nullptr) // tail will then also point to nullptr
     {
         head = tail = newNode;
     }
     else
     {
-        Node* temp = head;
+        Node *temp = head;
         newNode->next = temp;
         head = newNode;
     }
@@ -134,7 +137,7 @@ void SinglyLinkedList::addAtHead(int X)
 
 void SinglyLinkedList::addAtTail(int X)
 {
-    Node* newNode = new Node(X);
+    Node *newNode = new Node(X);
     if (head == nullptr)
     {
         head = tail = newNode;
@@ -149,27 +152,28 @@ void SinglyLinkedList::addAtTail(int X)
 
 void SinglyLinkedList::add(int X, int pos)
 {
-    if (pos == 0){
-      addAtHead(X);
+    if (pos == 0)
+    {
+        addAtHead(X);
     }
-    else if (pos < 0 || pos > size )
+    else if (pos < 0 || pos > size)
     {
         addAtTail(X);
-        //std::cout << "add_last";
+        // std::cout << "add_last";
     }
-    else if (pos == size) 
-    {    
-          addAtTail(X);
+    else if (pos == size)
+    {
+        addAtTail(X);
     }
     else
     {
-        Node* newNode = new Node(X);
-        Node* traverse = head;
+        Node *newNode = new Node(X);
+        Node *traverse = head;
         for (int i = 1; i < pos; i++)
         {
             traverse = traverse->next;
-        } // traverse points to (pos-1)th Node        
-        Node* temp = traverse->next; // pos-th Node  :  traverse - newNode - temp
+        } // traverse points to (pos-1)th Node
+        Node *temp = traverse->next; // pos-th Node  :  traverse - newNode - temp
         traverse->next = newNode;
         newNode->next = temp;
         size++;
@@ -184,19 +188,19 @@ void SinglyLinkedList::remove(int pos)
     }
     else if (pos == 0)
     {
-        Node* temp = head->next;
+        Node *temp = head->next;
         delete head;
         head = temp;
         size--;
     }
     else
     {
-        Node* traverse = head;
+        Node *traverse = head;
         for (int i = 0; i < pos - 1; i++)
         {
             traverse = traverse->next;
         } // traverseNode points to (pos-1)th Node
-        Node* temp = traverse->next; // pos-th Node (node we want to remove)
+        Node *temp = traverse->next; // pos-th Node (node we want to remove)
         traverse->next = temp->next; // (pos+1)th Node
         if (temp->next == nullptr)
         {
@@ -210,47 +214,48 @@ void SinglyLinkedList::remove(int pos)
 // My code begins here
 void SinglyLinkedList::replace(int X)
 {
-    Node* traverse = head;
-    
-    while (head && head->value == X) 
+    Node *traverse = head;
+
+    while (head && head->value == X)
     {
-        Node* previousNext = head->next;
-        
+        Node *previousNext = head->next;
+
         delete head;
         --size;
-        
-        pair<Node*, Node*> newList = createNodeXTimes(X);
-        
-        if (newList.first != nullptr) 
+
+        pair<Node *, Node *> newList = createNodeXTimes(X);
+
+        if (newList.first != nullptr)
         {
             size += X;
-            
+
             head = newList.first;
-            
+
             traverse = newList.second;
             traverse->next = previousNext;
-            
+
             break;
-        } 
-        
+        }
+
         head = previousNext;
         traverse = head;
     }
-    
-    while (traverse && traverse->next) {
+
+    while (traverse && traverse->next)
+    {
         if (traverse->next->value != X)
         {
             traverse = traverse->next;
             continue;
         }
-        
-        Node* nextNode = traverse->next->next;
-        
+
+        Node *nextNode = traverse->next->next;
+
         delete traverse->next;
         --size;
-        
-        pair<Node*, Node*> newList = createNodeXTimes(X);
-        
+
+        pair<Node *, Node *> newList = createNodeXTimes(X);
+
         if (newList.first == nullptr)
         {
             traverse->next = nextNode;
@@ -258,33 +263,33 @@ void SinglyLinkedList::replace(int X)
         else
         {
             size += X;
-            
+
             traverse->next = newList.first;
-            
+
             newList.second->next = nextNode;
             traverse = newList.second;
         }
     }
-    
+
     tail = traverse;
 }
 
-pair<Node*, Node*> SinglyLinkedList::createNodeXTimes(int X)
+pair<Node *, Node *> SinglyLinkedList::createNodeXTimes(int X)
 {
     if (X <= 0)
     {
         return {nullptr, nullptr};
     }
-    
-    Node* head = new Node(1);
-    
-    Node* tail = head;
-    
-    for (int i = 1; i < X; ++i) 
+
+    Node *head = new Node(1);
+
+    Node *tail = head;
+
+    for (int i = 1; i < X; ++i)
     {
         tail->next = new Node(1);
         tail = tail->next;
     }
-    
+
     return {head, tail};
 }

@@ -13,14 +13,14 @@ void solve()
     {
         int weight;
         std::cin >> weight;
-        
+
         int target = x - weight;
 
         if (weightToIndexMap.count(target) > 0)
         {
             result = {weightToIndexMap[target], i};
         }
-        
+
         weightToIndexMap[weight] = i;
     }
 
